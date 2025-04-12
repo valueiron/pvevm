@@ -73,7 +73,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_vm_disk_size"></a> [vm\_disk\_size](#output\_vm\_disk\_size) | VM Disk Size |
+| <a name="output_vm_disk_size"></a> [vm\_disk\_size](#output\_vm\_disk\_size) | VM disk size |
 | <a name="output_vm_id"></a> [vm\_id](#output\_vm\_id) | VM IDS |
 | <a name="output_vm_ip"></a> [vm\_ip](#output\_vm\_ip) | VM IP Addresses |
 | <a name="output_vm_memory"></a> [vm\_memory](#output\_vm\_memory) | VM Memory |
