@@ -29,6 +29,6 @@ output "vm_memory" {
 }
 
 output "vm_disk_size" {
-  description = "VM Disk Size"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.disks.scsi[0].scsi0.disk.size]
+  description = "VM disk size"
+  value       = [for vm in proxmox_vm_qemu.pvevm : vm.disks[0].size]
 }
