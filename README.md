@@ -78,5 +78,7 @@ No modules.
 | <a name="output_vm_memory"></a> [vm\_memory](#output\_vm\_memory) | VM Memory |
 | <a name="output_vm_name"></a> [vm\_name](#output\_vm\_name) | VM NAMES |
 | <a name="output_vm_nameserver"></a> [vm\_nameserver](#output\_vm\_nameserver) | VM Nameservers |
+| <a name="output_vm_notes"></a> [vm\_notes](#output\_vm\_notes) | VM Notes |
+| <a name="output_vm_tags"></a> [vm\_tags](#output\_vm\_tags) | VM Tags |
 | <a name="output_vm_vcpus"></a> [vm\_vcpus](#output\_vm\_vcpus) | VM VCPUS |
 <!-- END_TF_DOCS -->
