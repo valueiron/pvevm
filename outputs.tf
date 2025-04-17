@@ -28,3 +28,12 @@ output "vm_memory" {
   value       = [for vm in proxmox_vm_qemu.pvevm : vm.memory]
 }
 
+output "vm_notes" {
+  description = "VM Notes"
+  value       = [for vm in proxmox_vm_qemu.pvevm : vm.desc]
+}
+
+output "vm_tags" {
+  description = "VM Tags"
+  value       = [for vm in proxmox_vm_qemu.pvevm : vm.tags]
+}
