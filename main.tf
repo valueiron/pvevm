@@ -2,7 +2,7 @@ resource "proxmox_vm_qemu" "pvevm" {
   count        = var.instance_count
   name         = var.name != "" && var.instance_count > 1 ? "${var.name}${count.index + 1}" : var.name
   vmid         = (var.instance_count > 1 ? (var.vmid == 0 ? 0 : var.vmid + count.index) : var.vmid)
-  desc         = var.notes
+  description  = var.notes
   target_node  = var.target_node
   target_nodes = var.target_nodes
   clone        = var.clone
