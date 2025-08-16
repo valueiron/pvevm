@@ -2,15 +2,19 @@ resource "proxmox_vm_qemu" "pvevm" {
   count        = var.instance_count
   name         = var.name != "" && var.instance_count > 1 ? "${var.name}${count.index + 1}" : var.name
   vmid         = (var.instance_count > 1 ? (var.vmid == 0 ? 0 : var.vmid + count.index) : var.vmid)
-  desc         = var.notes
+  description  = var.notes
   target_node  = var.target_node
   target_nodes = var.target_nodes
   clone        = var.clone
   memory       = coalesce(var.memory, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).memory)
   scsihw       = var.scsihw
-  cores        = coalesce(var.cores, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).cores)
-  sockets      = coalesce(var.sockets, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).sockets)
-  vcpus        = coalesce(var.vcpus, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).vcpus)
+  
+  cpu {
+    cores   = var.cpu != null ? var.cpu.cores : coalesce(var.cores, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).cores)
+    sockets = var.cpu != null ? var.cpu.sockets : coalesce(var.sockets, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).sockets)
+    vcores  = var.cpu != null ? var.cpu.vcores : coalesce(var.vcpus, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).vcores)
+  }
+  
   agent        = var.agent
   tags         = var.tags
   serial {
