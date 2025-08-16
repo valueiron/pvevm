@@ -14,19 +14,11 @@ A Terraform module for creating and managing Proxmox VMs using the Proxmox provi
 
 ## Requirements
 
-- Terraform >= 0.13.0
-- Proxmox provider >= 3.0.2-rc03
+
 
 ## Provider Configuration
 
-```hcl
-provider "proxmox" {
-  pm_api_url          = "https://your-proxmox-host:8006/api2/json"
-  pm_api_token_id     = "your-token-id"
-  pm_api_token_secret = "your-token-secret"
-  pm_tls_insecure     = true  # Set to false for production
-}
-```
+
 
 ## Usage
 
@@ -53,30 +45,7 @@ module "example_vm" {
 }
 ```
 
-### Advanced CPU Configuration
 
-```hcl
-module "custom_vm" {
-  source = "./modules/pvevm"
-  
-  name         = "custom-vm"
-  target_node  = "pve-node-2"
-  clone        = "debian-template"
-  storage      = "local-lvm"
-  
-  # Custom CPU configuration
-  cpu = {
-    cores   = 8
-    sockets = 2
-    vcores  = 16
-  }
-  
-  memory = 32768
-  size   = "100G"
-  
-  # ... other configuration
-}
-```
 
 ## Inputs
 
