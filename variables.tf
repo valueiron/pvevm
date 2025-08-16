@@ -261,20 +261,30 @@ variable "instance_size" {
   default     = ""
 }
 
+variable "cpu" {
+  description = "CPU configuration block"
+  type = object({
+    cores   = number
+    sockets = number
+    vcores  = number
+  })
+  default = null
+}
+
 variable "instance_sizes" {
   description = "Map of instance sizes with predefined settings"
   type = map(object({
     memory  = number
     cores   = number
     sockets = number
-    vcpus   = number
+    vcores  = number
     size    = string
   }))
   default = {
-    xsmall = { memory = 2048, cores = 1, sockets = 1, vcpus = 1, size = "10G" }
-    small  = { memory = 4096, cores = 2, sockets = 1, vcpus = 2, size = "12G" }
-    medium = { memory = 8192, cores = 4, sockets = 1, vcpus = 4, size = "20G" }
-    large  = { memory = 16384, cores = 8, sockets = 1, vcpus = 8, size = "40G" }
-    xlarge = { memory = 32768, cores = 10, sockets = 1, vcpus = 10, size = "60G" }
+    xsmall = { memory = 2048, cores = 1, sockets = 1, vcores = 1, size = "10G" }
+    small  = { memory = 4096, cores = 2, sockets = 1, vcores = 2, size = "12G" }
+    medium = { memory = 8192, cores = 4, sockets = 1, vcores = 4, size = "20G" }
+    large  = { memory = 16384, cores = 8, sockets = 1, vcores = 8, size = "40G" }
+    xlarge = { memory = 32768, cores = 10, sockets = 1, vcores = 10, size = "60G" }
   }
 }
