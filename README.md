@@ -4,13 +4,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
-| <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | 3.0.1-rc8 |
+| <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | 3.0.2-rc03 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_proxmox"></a> [proxmox](#provider\_proxmox) | 3.0.1-rc8 |
+| <a name="provider_proxmox"></a> [proxmox](#provider\_proxmox) | 3.0.2-rc03 |
 
 ## Modules
 
@@ -20,7 +20,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [proxmox_vm_qemu.pvevm](https://registry.terraform.io/providers/Telmate/proxmox/3.0.1-rc8/docs/resources/vm_qemu) | resource |
+| [proxmox_vm_qemu.pvevm](https://registry.terraform.io/providers/Telmate/proxmox/3.0.2-rc03/docs/resources/vm_qemu) | resource |
 
 ## Inputs
 
