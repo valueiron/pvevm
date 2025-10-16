@@ -8,15 +8,16 @@ resource "proxmox_vm_qemu" "pvevm" {
   clone        = var.clone
   memory       = coalesce(var.memory, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).memory)
   scsihw       = var.scsihw
-  
+  pool         = var.pool
+
   cpu {
     cores   = var.cpu != null ? var.cpu.cores : coalesce(var.cores, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).cores)
     sockets = var.cpu != null ? var.cpu.sockets : coalesce(var.sockets, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).sockets)
     vcores  = var.cpu != null ? var.cpu.vcores : coalesce(var.vcpus, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).vcores)
   }
-  
-  agent        = var.agent
-  tags         = var.tags
+
+  agent = var.agent
+  tags  = var.tags
   serial {
     id = var.serial0
   }
@@ -34,7 +35,7 @@ resource "proxmox_vm_qemu" "pvevm" {
       queues    = null
       rate      = null
     }]
-    
+
     content {
       id        = network.value.id
       bridge    = network.value.bridge
@@ -62,7 +63,7 @@ resource "proxmox_vm_qemu" "pvevm" {
           storage = var.storage
         }
       }
-      
+
       # Dynamic additional SCSI disks
       dynamic "scsi2" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 2]
@@ -73,7 +74,7 @@ resource "proxmox_vm_qemu" "pvevm" {
           }
         }
       }
-      
+
       dynamic "scsi3" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 3]
         content {
@@ -83,7 +84,7 @@ resource "proxmox_vm_qemu" "pvevm" {
           }
         }
       }
-      
+
       dynamic "scsi4" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 4]
         content {
@@ -93,7 +94,7 @@ resource "proxmox_vm_qemu" "pvevm" {
           }
         }
       }
-      
+
       dynamic "scsi5" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 5]
         content {
