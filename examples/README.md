@@ -2,6 +2,13 @@
 
 This module has been updated to use Proxmox provider v3.0.2-rc03 with improved syntax.
 
+## New in feature/expansion Branch
+
+The `feature/expansion` branch adds support for:
+- **Multiple Network Interfaces**: Configure VMs with multiple NICs on different VLANs/bridges
+- **Additional Disks**: Add extra disks beyond the primary and cloudinit disks
+- See [multiple-networks-disks.md](./multiple-networks-disks.md) for detailed examples
+
 ## Basic Usage
 
 ```hcl

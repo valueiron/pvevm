@@ -11,6 +11,8 @@ A Terraform module for creating and managing Proxmox VMs using the Proxmox provi
 - Network configuration
 - Storage management
 - Predefined instance sizes (xsmall, small, medium, large, xlarge)
+- **NEW (feature/expansion)**: Multiple network interfaces support
+- **NEW (feature/expansion)**: Additional disk configurations
 
 ## Requirements
 
@@ -86,7 +88,44 @@ The module provides predefined instance sizes for quick deployment:
 
 ## Recent Changes
 
-### v3.0.2-rc03 Upgrade
+### feature/expansion Branch - Multiple Networks and Disks
+
+The `feature/expansion` branch adds powerful new capabilities:
+
+1. **Multiple Network Interfaces**
+   - Configure VMs with multiple NICs
+   - Support for different VLANs per interface
+   - Advanced network options (rate limiting, firewall, queues)
+   - Backward compatible with single network configuration
+
+2. **Additional Disk Support**
+   - Add multiple additional disks (scsi2-scsi5)
+   - Per-disk configuration (SSD, cache, backup, iothread)
+   - Flexible storage allocation
+   - Primary disk still configured via instance_size
+
+**Example:**
+```hcl
+module "advanced_vm" {
+  source = "github.com/valueiron/pvevm.git?ref=feature/expansion"
+  
+  # ... basic config ...
+  
+  networks = [
+    { bridge = "vmbr0", tag = 100 },  # Management
+    { bridge = "vmbr0", tag = 200 }   # Data
+  ]
+  
+  additional_disks = [
+    { type = "scsi", slot = 2, storage = "nvme2-ceph", size = "100G", ssd = true },
+    { type = "scsi", slot = 3, storage = "local-lvm", size = "500G" }
+  ]
+}
+```
+
+See [examples/multiple-networks-disks.md](./examples/multiple-networks-disks.md) for detailed examples.
+
+### v3.0.2-rc03 Upgrade (main branch)
 
 This module has been updated to use Proxmox provider v3.0.2-rc03 with the following changes:
 

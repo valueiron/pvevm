@@ -21,13 +21,34 @@ resource "proxmox_vm_qemu" "pvevm" {
     id = var.serial0
   }
 
-  network {
-    id     = var.id
-    bridge = var.bridge
-    model  = var.model
-    tag    = var.tag
+  # Dynamic network blocks - use multiple networks if provided, otherwise fall back to single network
+  dynamic "network" {
+    for_each = length(var.networks) > 0 ? var.networks : [{
+      id        = var.id
+      bridge    = var.bridge
+      model     = var.model
+      tag       = var.tag
+      firewall  = null
+      link_down = null
+      macaddr   = null
+      queues    = null
+      rate      = null
+    }]
+    
+    content {
+      id        = network.value.id
+      bridge    = network.value.bridge
+      model     = network.value.model
+      tag       = network.value.tag
+      firewall  = network.value.firewall
+      link_down = network.value.link_down
+      macaddr   = network.value.macaddr
+      queues    = network.value.queues
+      rate      = network.value.rate
+    }
   }
 
+  # Disk configuration with support for additional disks
   disks {
     scsi {
       scsi0 {
@@ -39,6 +60,75 @@ resource "proxmox_vm_qemu" "pvevm" {
       scsi1 {
         cloudinit {
           storage = var.storage
+        }
+      }
+      
+      # Dynamic additional SCSI disks
+      dynamic "scsi2" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 2]
+        content {
+          disk {
+            storage   = scsi2.value.storage
+            size      = scsi2.value.size
+            format    = scsi2.value.format
+            cache     = scsi2.value.cache
+            backup    = scsi2.value.backup
+            iothread  = scsi2.value.iothread
+            replicate = scsi2.value.replicate
+            ssd       = scsi2.value.ssd
+            discard   = scsi2.value.discard
+          }
+        }
+      }
+      
+      dynamic "scsi3" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 3]
+        content {
+          disk {
+            storage   = scsi3.value.storage
+            size      = scsi3.value.size
+            format    = scsi3.value.format
+            cache     = scsi3.value.cache
+            backup    = scsi3.value.backup
+            iothread  = scsi3.value.iothread
+            replicate = scsi3.value.replicate
+            ssd       = scsi3.value.ssd
+            discard   = scsi3.value.discard
+          }
+        }
+      }
+      
+      dynamic "scsi4" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 4]
+        content {
+          disk {
+            storage   = scsi4.value.storage
+            size      = scsi4.value.size
+            format    = scsi4.value.format
+            cache     = scsi4.value.cache
+            backup    = scsi4.value.backup
+            iothread  = scsi4.value.iothread
+            replicate = scsi4.value.replicate
+            ssd       = scsi4.value.ssd
+            discard   = scsi4.value.discard
+          }
+        }
+      }
+      
+      dynamic "scsi5" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 5]
+        content {
+          disk {
+            storage   = scsi5.value.storage
+            size      = scsi5.value.size
+            format    = scsi5.value.format
+            cache     = scsi5.value.cache
+            backup    = scsi5.value.backup
+            iothread  = scsi5.value.iothread
+            replicate = scsi5.value.replicate
+            ssd       = scsi5.value.ssd
+            discard   = scsi5.value.discard
+          }
         }
       }
     }
