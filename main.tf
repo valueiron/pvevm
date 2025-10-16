@@ -108,6 +108,7 @@ resource "proxmox_vm_qemu" "pvevm" {
 
   os_type      = var.ostype
   ipconfig0    = length(var.ip_addresses) > count.index ? format("ip=%s,gw=%s", var.ip_addresses[count.index], var.gateway) : var.ipconfig0
+  ipconfig1    = length(var.ip_addresses) > count.index ? format("ip=%s,gw=%s", var.ip_addresses[count.index], var.gateway) : var.ipconfig1
   nameserver   = var.nameserver
   ciuser       = var.ciuser
   cipassword   = var.cipassword
