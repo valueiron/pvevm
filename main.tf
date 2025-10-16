@@ -21,13 +21,34 @@ resource "proxmox_vm_qemu" "pvevm" {
     id = var.serial0
   }
 
-  network {
-    id     = var.id
-    bridge = var.bridge
-    model  = var.model
-    tag    = var.tag
+  # Dynamic network blocks - use multiple networks if provided, otherwise fall back to single network
+  dynamic "network" {
+    for_each = length(var.networks) > 0 ? var.networks : [{
+      id        = var.id
+      bridge    = var.bridge
+      model     = var.model
+      tag       = var.tag
+      firewall  = null
+      link_down = null
+      macaddr   = null
+      queues    = null
+      rate      = null
+    }]
+    
+    content {
+      id        = network.value.id
+      bridge    = network.value.bridge
+      model     = network.value.model
+      tag       = network.value.tag
+      firewall  = network.value.firewall
+      link_down = network.value.link_down
+      macaddr   = network.value.macaddr
+      queues    = network.value.queues
+      rate      = network.value.rate
+    }
   }
 
+  # Disk configuration with support for additional disks
   disks {
     scsi {
       scsi0 {
@@ -41,11 +62,53 @@ resource "proxmox_vm_qemu" "pvevm" {
           storage = var.storage
         }
       }
+      
+      # Dynamic additional SCSI disks
+      dynamic "scsi2" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 2]
+        content {
+          disk {
+            storage = scsi2.value.storage
+            size    = scsi2.value.size
+          }
+        }
+      }
+      
+      dynamic "scsi3" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 3]
+        content {
+          disk {
+            storage = scsi3.value.storage
+            size    = scsi3.value.size
+          }
+        }
+      }
+      
+      dynamic "scsi4" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 4]
+        content {
+          disk {
+            storage = scsi4.value.storage
+            size    = scsi4.value.size
+          }
+        }
+      }
+      
+      dynamic "scsi5" {
+        for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 5]
+        content {
+          disk {
+            storage = scsi5.value.storage
+            size    = scsi5.value.size
+          }
+        }
+      }
     }
   }
 
   os_type      = var.ostype
   ipconfig0    = length(var.ip_addresses) > count.index ? format("ip=%s,gw=%s", var.ip_addresses[count.index], var.gateway) : var.ipconfig0
+  ipconfig1    = length(var.ip_addresses) > count.index ? format("ip=%s,gw=%s", var.ip_addresses[count.index], var.gateway) : var.ipconfig1
   nameserver   = var.nameserver
   ciuser       = var.ciuser
   cipassword   = var.cipassword

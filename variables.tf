@@ -162,11 +162,32 @@ variable "size" {
 }
 
 
-################################# Not being used just yet but will be used in the new module
+################################# Multiple Network and Disk Support
 variable "networks" {
-  description = "VM network adapter config"
-  type        = list(map(string))
-  default     = [{}]
+  description = "List of network configurations for the VM. Leave empty to use single network config (bridge, model, tag variables)."
+  type = list(object({
+    id        = optional(number, 0)
+    model     = optional(string, "virtio")
+    bridge    = optional(string, "vmbr0")
+    tag       = optional(number)
+    firewall  = optional(bool)
+    link_down = optional(bool)
+    macaddr   = optional(string)
+    queues    = optional(number)
+    rate      = optional(number)
+  }))
+  default = []
+}
+
+variable "additional_disks" {
+  description = "List of additional disk configurations beyond the primary disk and cloudinit disk. Only 'storage' and 'size' are supported in v3.0.2-rc03."
+  type = list(object({
+    type    = string # scsi, sata, virtio, ide
+    storage = string # Storage location (e.g., "local-lvm", "nvme2-ceph")
+    size    = string # Disk size (e.g., "10G", "100G")
+    slot    = number # Disk slot number: scsi2-scsi5 (slots 0-1 reserved)
+  }))
+  default = []
 }
 
 variable "connection" {
@@ -185,9 +206,9 @@ variable "pool" {
   default     = null
 }
 
-
+# Deprecated - use additional_disks instead
 variable "disks" {
-  description = "VM disk config"
+  description = "DEPRECATED: Use additional_disks instead. VM disk config"
   type        = list(map(string))
   default     = [{}]
 }
