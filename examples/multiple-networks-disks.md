@@ -77,25 +77,18 @@ module "multi_disk_vm" {
       slot    = 2
       storage = "nvme2-ceph"
       size    = "100G"
-      ssd     = true
-      discard = "on"
-      backup  = true
     },
     {
       type    = "scsi"
       slot    = 3
       storage = "nvme2-ceph"
       size    = "500G"
-      ssd     = true
-      discard = "on"
-      backup  = false  # Don't backup large data disk
     },
     {
       type    = "scsi"
       slot    = 4
       storage = "local-lvm"
       size    = "200G"
-      backup  = true
     }
   ]
   
@@ -158,32 +151,22 @@ module "advanced_vm" {
   # Multiple disks for database storage
   additional_disks = [
     {
-      type      = "scsi"
-      slot      = 2
-      storage   = "nvme2-ceph"
-      size      = "500G"      # Database data
-      ssd       = true
-      discard   = "on"
-      iothread  = true
-      cache     = "writeback"
-      backup    = true
+      type    = "scsi"
+      slot    = 2
+      storage = "nvme2-ceph"
+      size    = "500G"  # Database data
     },
     {
-      type      = "scsi"
-      slot      = 3
-      storage   = "nvme2-ceph"
-      size      = "200G"      # Database logs
-      ssd       = true
-      discard   = "on"
-      iothread  = true
-      backup    = true
+      type    = "scsi"
+      slot    = 3
+      storage = "nvme2-ceph"
+      size    = "200G"  # Database logs
     },
     {
-      type      = "scsi"
-      slot      = 4
-      storage   = "local-lvm"
-      size      = "100G"      # Temporary/scratch space
-      backup    = false
+      type    = "scsi"
+      slot    = 4
+      storage = "local-lvm"
+      size    = "100G"  # Temporary/scratch space
     }
   ]
   
@@ -255,13 +238,8 @@ module "simple_vm" {
 | slot | Disk slot number (2-5 for SCSI) | number | **required** |
 | storage | Storage location | string | **required** |
 | size | Disk size (e.g., "100G") | string | **required** |
-| format | Disk format | string | null |
-| cache | Cache mode | string | null |
-| backup | Enable backup | bool | true |
-| iothread | Enable IO thread | bool | null |
-| replicate | Enable replication | bool | null |
-| ssd | SSD emulation | bool | null |
-| discard | Discard/TRIM support | string | null |
+
+**Note:** In Proxmox provider v3.0.2-rc03, only `type`, `slot`, `storage`, and `size` are supported for additional disks. Advanced options like `ssd`, `cache`, `iothread`, etc. are not available in the disk block.
 
 ## Important Notes
 
@@ -279,8 +257,7 @@ module "simple_vm" {
    - Specify `networks` to override and use multiple networks
 
 4. **Performance Tips**:
-   - Use `iothread = true` for database and high-I/O workloads
-   - Use `ssd = true` and `discard = "on"` for SSD-backed storage
    - Set appropriate `rate` limits on network interfaces if needed
-   - Use `cache = "writeback"` for better performance (with UPS backup)
+   - Use multiple network interfaces for different traffic types (management, data, storage)
+   - Choose appropriate storage backends (nvme2-ceph for performance, local-lvm for local storage)
 

@@ -68,15 +68,8 @@ resource "proxmox_vm_qemu" "pvevm" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 2]
         content {
           disk {
-            storage   = scsi2.value.storage
-            size      = scsi2.value.size
-            format    = scsi2.value.format
-            cache     = scsi2.value.cache
-            backup    = scsi2.value.backup
-            iothread  = scsi2.value.iothread
-            replicate = scsi2.value.replicate
-            ssd       = scsi2.value.ssd
-            discard   = scsi2.value.discard
+            storage = scsi2.value.storage
+            size    = scsi2.value.size
           }
         }
       }
@@ -85,15 +78,8 @@ resource "proxmox_vm_qemu" "pvevm" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 3]
         content {
           disk {
-            storage   = scsi3.value.storage
-            size      = scsi3.value.size
-            format    = scsi3.value.format
-            cache     = scsi3.value.cache
-            backup    = scsi3.value.backup
-            iothread  = scsi3.value.iothread
-            replicate = scsi3.value.replicate
-            ssd       = scsi3.value.ssd
-            discard   = scsi3.value.discard
+            storage = scsi3.value.storage
+            size    = scsi3.value.size
           }
         }
       }
@@ -102,15 +88,8 @@ resource "proxmox_vm_qemu" "pvevm" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 4]
         content {
           disk {
-            storage   = scsi4.value.storage
-            size      = scsi4.value.size
-            format    = scsi4.value.format
-            cache     = scsi4.value.cache
-            backup    = scsi4.value.backup
-            iothread  = scsi4.value.iothread
-            replicate = scsi4.value.replicate
-            ssd       = scsi4.value.ssd
-            discard   = scsi4.value.discard
+            storage = scsi4.value.storage
+            size    = scsi4.value.size
           }
         }
       }
@@ -119,15 +98,8 @@ resource "proxmox_vm_qemu" "pvevm" {
         for_each = [for disk in var.additional_disks : disk if disk.type == "scsi" && disk.slot == 5]
         content {
           disk {
-            storage   = scsi5.value.storage
-            size      = scsi5.value.size
-            format    = scsi5.value.format
-            cache     = scsi5.value.cache
-            backup    = scsi5.value.backup
-            iothread  = scsi5.value.iothread
-            replicate = scsi5.value.replicate
-            ssd       = scsi5.value.ssd
-            discard   = scsi5.value.discard
+            storage = scsi5.value.storage
+            size    = scsi5.value.size
           }
         }
       }

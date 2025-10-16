@@ -180,19 +180,12 @@ variable "networks" {
 }
 
 variable "additional_disks" {
-  description = "List of additional disk configurations beyond the primary disk and cloudinit disk"
+  description = "List of additional disk configurations beyond the primary disk and cloudinit disk. Only 'storage' and 'size' are supported in v3.0.2-rc03."
   type = list(object({
-    type      = string # scsi, sata, virtio, ide
-    storage   = string
-    size      = string
-    slot      = number # scsi0, scsi1, etc - slot number
-    format    = optional(string)
-    cache     = optional(string)
-    backup    = optional(bool, true)
-    iothread  = optional(bool)
-    replicate = optional(bool)
-    ssd       = optional(bool)
-    discard   = optional(string)
+    type    = string # scsi, sata, virtio, ide
+    storage = string # Storage location (e.g., "local-lvm", "nvme2-ceph")
+    size    = string # Disk size (e.g., "10G", "100G")
+    slot    = number # Disk slot number: scsi2-scsi5 (slots 0-1 reserved)
   }))
   default = []
 }
