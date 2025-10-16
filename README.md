@@ -169,6 +169,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_additional_disks"></a> [additional\_disks](#input\_additional\_disks) | List of additional disk configurations beyond the primary disk and cloudinit disk. Only 'storage' and 'size' are supported in v3.0.2-rc03. | <pre>list(object({<br/>    type    = string # scsi, sata, virtio, ide<br/>    storage = string # Storage location (e.g., "local-lvm", "nvme2-ceph")<br/>    size    = string # Disk size (e.g., "10G", "100G")<br/>    slot    = number # Disk slot number: scsi2-scsi5 (slots 0-1 reserved)<br/>  }))</pre> | `[]` | no |
 | <a name="input_agent"></a> [agent](#input\_agent) | Qemu Guest Agent Enabled or not enabled=1 | `number` | `1` | no |
 | <a name="input_bridge"></a> [bridge](#input\_bridge) | Map of tags to add to the VM. Stored as JSON in the Notes field in Proxmox. | `string` | `"vmbr0"` | no |
 | <a name="input_cipassword"></a> [cipassword](#input\_cipassword) | Override the default cloud-init user's password | `string` | n/a | yes |
@@ -177,7 +178,7 @@ No modules.
 | <a name="input_connection"></a> [connection](#input\_connection) | Provisioner connection settings | `map(string)` | <pre>{<br/>  "agent": true,<br/>  "type": "ssh"<br/>}</pre> | no |
 | <a name="input_cores"></a> [cores](#input\_cores) | The number of CPU cores per CPU socket to allocate to the VM | `number` | `null` | no |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU configuration block | <pre>object({<br/>    cores   = number<br/>    sockets = number<br/>    vcores  = number<br/>  })</pre> | `null` | no |
-| <a name="input_disks"></a> [disks](#input\_disks) | VM disk config | `list(map(string))` | <pre>[<br/>  {}<br/>]</pre> | no |
+| <a name="input_disks"></a> [disks](#input\_disks) | DEPRECATED: Use additional\_disks instead. VM disk config | `list(map(string))` | <pre>[<br/>  {}<br/>]</pre> | no |
 | <a name="input_gateway"></a> [gateway](#input\_gateway) | Gateway IP Address | `string` | `""` | no |
 | <a name="input_id"></a> [id](#input\_id) | New required field proxmox | `number` | `0` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | Instance Count | `number` | `1` | no |
@@ -191,7 +192,7 @@ No modules.
 | <a name="input_model"></a> [model](#input\_model) | Network Model | `string` | `"virtio"` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the VM within Proxmox | `string` | n/a | yes |
 | <a name="input_nameserver"></a> [nameserver](#input\_nameserver) | Sets default DNS server for guest | `string` | `null` | no |
-| <a name="input_networks"></a> [networks](#input\_networks) | VM network adapter config | `list(map(string))` | <pre>[<br/>  {}<br/>]</pre> | no |
+| <a name="input_networks"></a> [networks](#input\_networks) | List of network configurations for the VM. Leave empty to use single network config (bridge, model, tag variables). | <pre>list(object({<br/>    id        = optional(number, 0)<br/>    model     = optional(string, "virtio")<br/>    bridge    = optional(string, "vmbr0")<br/>    tag       = optional(number)<br/>    firewall  = optional(bool)<br/>    link_down = optional(bool)<br/>    macaddr   = optional(string)<br/>    queues    = optional(number)<br/>    rate      = optional(number)<br/>  }))</pre> | `[]` | no |
 | <a name="input_notes"></a> [notes](#input\_notes) | VM notes field that maps to desc | `string` | `"Managed by Terraform."` | no |
 | <a name="input_ostype"></a> [ostype](#input\_ostype) | The OS Type | `string` | `"cloud-init"` | no |
 | <a name="input_pool"></a> [pool](#input\_pool) | The destination resource pool for the new VM | `string` | `null` | no |
