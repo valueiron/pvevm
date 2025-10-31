@@ -1,39 +1,39 @@
 output "vm_ip" {
-  description = "VM IP Addresses"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.default_ipv4_address]
+  description = "VM IPv4 Address"
+  value       = proxmox_vm_qemu.pvevm.default_ipv4_address
 }
 
 output "vm_nameserver" {
-  description = "VM Nameservers"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.nameserver]
+  description = "VM Nameserver"
+  value       = proxmox_vm_qemu.pvevm.nameserver
 }
 
 output "vm_name" {
-  description = "VM NAMES"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.name]
+  description = "VM Name"
+  value       = proxmox_vm_qemu.pvevm.name
 }
 
 output "vm_id" {
-  description = "VM IDS"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.vmid]
+  description = "VM ID"
+  value       = proxmox_vm_qemu.pvevm.vmid
 }
 
 output "vm_vcpus" {
   description = "VM VCPUS"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.vcpus]
+  value       = var.cpu != null ? var.cpu.vcores : lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).vcores
 }
 
 output "vm_memory" {
   description = "VM Memory"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.memory]
+  value       = proxmox_vm_qemu.pvevm.memory
 }
 
 output "vm_notes" {
   description = "VM Notes"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.description]
+  value       = proxmox_vm_qemu.pvevm.description
 }
 
 output "vm_tags" {
   description = "VM Tags"
-  value       = [for vm in proxmox_vm_qemu.pvevm : vm.tags]
+  value       = proxmox_vm_qemu.pvevm.tags
 }

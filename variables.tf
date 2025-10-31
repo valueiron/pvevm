@@ -1,37 +1,17 @@
 #####################################################
-# PROXMOX API
+# Module Inputs (single-VM; use for_each at call site)
 #####################################################
-variable "proxmox_api_url" {
-  description = "Full Proxmox API URL"
-  type        = string
-}
-
-variable "proxmox_api_token_id" {
-  description = "API Token"
-  type        = string
-}
-
-variable "proxmox_api_token_secret" {
-  description = "API Secret"
-  type        = string
-}
-
-variable "proxmox_tls_insecure" {
-  description = "Allow Insecure TLS"
-  type        = bool
-  default     = true
-}
 
 #####################################################
 # VM QEMU Resource
 #####################################################
 variable "name" {
-  description = "The name of the VM within Proxmox"
+  description = "VM name as it will appear in Proxmox"
   type        = string
 }
 
 variable "vmid" {
-  description = "The vm id of the VM within Proxmox. Default is next available"
+  description = "Proxmox VM ID. Use 0 to auto-assign the next available ID"
   type        = number
   default     = 0
 
@@ -42,121 +22,111 @@ variable "vmid" {
 }
 
 variable "notes" {
-  description = "VM notes field that maps to desc"
+  description = "Proxmox VM description/notes"
   type        = string
   default     = "Managed by Terraform."
 }
 
 variable "target_node" {
-  description = "The name of the Proxmox Node on which to place the VM"
+  description = "Preferred Proxmox node to place the VM"
   type        = string
   default     = null
 }
 
 variable "target_nodes" {
-  description = "The name of the Proxmox Node on which to place the VM"
+  description = "List of Proxmox nodes eligible for placement"
   type        = list(string)
   default     = null
 }
 
 variable "clone" {
-  description = "The base VM from which to clone to create the new VM"
+  description = "Source template or VM name to clone"
   type        = string
 }
 
 variable "memory" {
-  description = "The amount of memory to allocate to the VM in Megabytes"
+  description = "Memory allocated to the VM in MiB"
   type        = number
   default     = null
 }
 
 variable "scsihw" {
-  description = "scsi hardware type"
+  description = "SCSI controller model"
   type        = string
   default     = "virtio-scsi-pci"
 }
 
 variable "cores" {
-  description = "The number of CPU cores per CPU socket to allocate to the VM"
+  description = "CPU cores per socket"
   type        = number
   default     = null
 }
 
 variable "sockets" {
-  description = "The number of CPU sockets to allocate to the VM"
+  description = "Number of CPU sockets"
   type        = number
   default     = null
 }
 
 variable "vcpus" {
-  description = "The number of vCPU  to allocate to the VM"
+  description = "Total virtual CPUs (threads)"
   type        = number
   default     = null
 }
 
 variable "agent" {
-  description = "Qemu Guest Agent Enabled or not enabled=1"
+  description = "Enable QEMU Guest Agent (1 enabled, 0 disabled)"
   type        = number
   default     = 1
 }
 
 variable "serial0" {
-  description = "serial device in order for console device to work"
+  description = "Serial device index for console access"
   type        = number
   default     = 0
 }
 
 variable "tags" {
-  description = "tags comma seperated"
+  description = "Comma-separated tags stored on the VM"
   type        = string
   default     = ""
 }
 
 ############################## NETWORK
 variable "bridge" {
-  description = "Map of tags to add to the VM. Stored as JSON in the Notes field in Proxmox."
+  description = "Network bridge to attach NICs to (e.g., vmbr0)"
   type        = string
   default     = "vmbr0"
 }
 
 variable "id" {
-  description = "New required field proxmox"
+  description = "NIC device ID/index as required by the provider"
   type        = number
   default     = 0
 }
 
 variable "model" {
-  description = "Network Model"
+  description = "NIC model (e.g., virtio, e1000)"
   type        = string
   default     = "virtio"
 }
 
 variable "tag" {
-  description = "Vlan ID"
+  description = "802.1Q VLAN ID"
   type        = number
   default     = null
 }
 
-variable "ip_addresses" {
-  description = "List of IP addresses with cidr notation"
-  type        = list(string)
-  default     = []
-}
-
-variable "gateway" {
-  description = "Gateway IP Address"
-  type        = string
-  default     = ""
-}
+// Removed legacy ip_addresses/gateway; use ipconfig* directly per VM
 
 ######################### STORAGE
 variable "storage" {
-  description = "Disk Storage Location"
+  description = "Proxmox storage target for disks (e.g., local-lvm, nvme2-ceph)"
   type        = string
 }
 
 variable "size" {
-  description = "Disk Size"
+  description = "Boot disk size (e.g., 20G)"
   type        = string
   default     = null
 }
@@ -164,7 +134,7 @@ variable "size" {
 
 ################################# Multiple Network and Disk Support
 variable "networks" {
-  description = "List of network configurations for the VM. Leave empty to use single network config (bridge, model, tag variables)."
+  description = "Optional NIC list. If empty, a single NIC is built from bridge/model/tag"
   type = list(object({
     id        = optional(number, 0)
     model     = optional(string, "virtio")
@@ -180,110 +150,87 @@ variable "networks" {
 }
 
 variable "additional_disks" {
-  description = "List of additional disk configurations beyond the primary disk and cloudinit disk. Only 'storage' and 'size' are supported in v3.0.2-rc03."
+  description = "Additional disks to attach (beyond scsi0 boot and cloud-init)"
   type = list(object({
     type    = string # scsi, sata, virtio, ide
-    storage = string # Storage location (e.g., "local-lvm", "nvme2-ceph")
-    size    = string # Disk size (e.g., "10G", "100G")
-    slot    = number # Disk slot number: scsi2-scsi5 (slots 0-1 reserved)
+    storage = string # e.g., "local-lvm", "nvme2-ceph"
+    size    = string # e.g., "10G", "100G"
+    slot    = number # scsi2–scsi5 (slots 0–1 reserved)
   }))
   default = []
 }
 
-variable "connection" {
-  description = "Provisioner connection settings"
-  type        = map(string)
-  sensitive   = true
-  default = {
-    type  = "ssh"
-    agent = true
-  }
-}
+// Removed unused connection settings
 
 variable "pool" {
-  description = "The destination resource pool for the new VM"
+  description = "Destination Proxmox resource pool"
   type        = string
   default     = null
 }
 
-# Deprecated - use additional_disks instead
-variable "disks" {
-  description = "DEPRECATED: Use additional_disks instead. VM disk config"
-  type        = list(map(string))
-  default     = [{}]
-}
-
-variable "instance_count" {
-  description = "Instance Count"
-  type        = number
-  default     = 1
-}
+// Removed deprecated disks and legacy instance_count (module now single instance)
 
 #####################################################
 # Cloud-Init
 #####################################################
 variable "ostype" {
-  description = "The OS Type"
+  description = "OS type. Use 'cloud-init' for cloud-init templates"
   type        = string
   default     = "cloud-init"
 }
 
 variable "ciuser" {
-  description = "Override the default cloud-init user for provisioning"
+  description = "Cloud-init default user"
   type        = string
 }
 
 variable "cipassword" {
-  description = "Override the default cloud-init user's password"
+  description = "Cloud-init user password"
   type        = string
   sensitive   = true
 }
 
 variable "searchdomain" {
-  description = "Sets default DNS search domain suffix"
+  description = "Default DNS search domain suffix"
   type        = string
   default     = null
 }
 
 variable "nameserver" {
-  description = "Sets default DNS server for guest"
+  description = "Default DNS server for the guest"
   type        = string
   default     = null
 }
 
 variable "sshkeys" {
-  description = "Newline delimited list of SSH public keys to add to authorized keys file for the cloud-init user"
+  description = "Newline-delimited SSH public keys for the cloud-init user"
   type        = string
 }
 
 variable "ipconfig0" {
-  description = "The first IP address to assign to the guest. Format: [gw=<GatewayIPv4>] [,gw6=<GatewayIPv6>] [,ip=<IPv4Format/CIDR>] [,ip6=<IPv6Format/CIDR>]"
+  description = "Cloud-init IP config for NIC 0 (e.g., ip=192.168.1.10/24,gw=192.168.1.1)"
   type        = string
   default     = "ip=dhcp"
 }
 
 variable "ipconfig1" {
-  description = "The second IP address to assign to the guest. Same format as ipconfig0"
+  description = "Cloud-init IP config for NIC 1 (same format as ipconfig0)"
   type        = string
   default     = null
 }
 
-variable "ipconfig2" {
-  description = "The third IP address to assign to the guest. Same format as ipconfig0"
-  type        = string
-  default     = null
-}
+// ipconfig2 removed (module supports ipconfig0/ipconfig1). Add back if needed later
 
 
 # Custom Sizes
 variable "instance_size" {
-  description = "The size of the instance (small, medium, large). If empty, custom values must be provided."
+  description = "Preset size key (xsmall, small, medium, large, xlarge). Empty to use custom values"
   type        = string
   default     = ""
 }
 
 variable "cpu" {
-  description = "CPU configuration block"
+  description = "Explicit CPU configuration (overrides cores/sockets/vcpus variables)"
   type = object({
     cores   = number
     sockets = number
@@ -293,7 +240,7 @@ variable "cpu" {
 }
 
 variable "instance_sizes" {
-  description = "Map of instance sizes with predefined settings"
+  description = "Map of size presets defining memory, cores, sockets, vcores, and disk size"
   type = map(object({
     memory  = number
     cores   = number
