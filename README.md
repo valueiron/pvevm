@@ -224,60 +224,50 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_disks"></a> [additional\_disks](#input\_additional\_disks) | List of additional disk configurations beyond the primary disk and cloudinit disk. Only 'storage' and 'size' are supported in v3.0.2-rc03. | <pre>list(object({<br/>    type    = string # scsi, sata, virtio, ide<br/>    storage = string # Storage location (e.g., "local-lvm", "nvme2-ceph")<br/>    size    = string # Disk size (e.g., "10G", "100G")<br/>    slot    = number # Disk slot number: scsi2-scsi5 (slots 0-1 reserved)<br/>  }))</pre> | `[]` | no |
-| <a name="input_agent"></a> [agent](#input\_agent) | Qemu Guest Agent Enabled or not enabled=1 | `number` | `1` | no |
-| <a name="input_bridge"></a> [bridge](#input\_bridge) | Map of tags to add to the VM. Stored as JSON in the Notes field in Proxmox. | `string` | `"vmbr0"` | no |
-| <a name="input_cipassword"></a> [cipassword](#input\_cipassword) | Override the default cloud-init user's password | `string` | n/a | yes |
-| <a name="input_ciuser"></a> [ciuser](#input\_ciuser) | Override the default cloud-init user for provisioning | `string` | n/a | yes |
-| <a name="input_clone"></a> [clone](#input\_clone) | The base VM from which to clone to create the new VM | `string` | n/a | yes |
-| <a name="input_connection"></a> [connection](#input\_connection) | Provisioner connection settings | `map(string)` | <pre>{<br/>  "agent": true,<br/>  "type": "ssh"<br/>}</pre> | no |
-| <a name="input_cores"></a> [cores](#input\_cores) | The number of CPU cores per CPU socket to allocate to the VM | `number` | `null` | no |
-| <a name="input_cpu"></a> [cpu](#input\_cpu) | CPU configuration block | <pre>object({<br/>    cores   = number<br/>    sockets = number<br/>    vcores  = number<br/>  })</pre> | `null` | no |
-| <a name="input_disks"></a> [disks](#input\_disks) | DEPRECATED: Use additional\_disks instead. VM disk config | `list(map(string))` | <pre>[<br/>  {}<br/>]</pre> | no |
-| <a name="input_gateway"></a> [gateway](#input\_gateway) | Gateway IP Address | `string` | `""` | no |
-| <a name="input_id"></a> [id](#input\_id) | New required field proxmox | `number` | `0` | no |
-| <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | Instance Count | `number` | `1` | no |
-| <a name="input_instance_size"></a> [instance\_size](#input\_instance\_size) | The size of the instance (small, medium, large). If empty, custom values must be provided. | `string` | `""` | no |
-| <a name="input_instance_sizes"></a> [instance\_sizes](#input\_instance\_sizes) | Map of instance sizes with predefined settings | <pre>map(object({<br/>    memory  = number<br/>    cores   = number<br/>    sockets = number<br/>    vcores  = number<br/>    size    = string<br/>  }))</pre> | <pre>{<br/>  "large": {<br/>    "cores": 8,<br/>    "memory": 16384,<br/>    "size": "40G",<br/>    "sockets": 1,<br/>    "vcores": 8<br/>  },<br/>  "medium": {<br/>    "cores": 4,<br/>    "memory": 8192,<br/>    "size": "20G",<br/>    "sockets": 1,<br/>    "vcores": 4<br/>  },<br/>  "small": {<br/>    "cores": 2,<br/>    "memory": 4096,<br/>    "size": "12G",<br/>    "sockets": 1,<br/>    "vcores": 2<br/>  },<br/>  "xlarge": {<br/>    "cores": 10,<br/>    "memory": 32768,<br/>    "size": "60G",<br/>    "sockets": 1,<br/>    "vcores": 10<br/>  },<br/>  "xsmall": {<br/>    "cores": 1,<br/>    "memory": 2048,<br/>    "size": "10G",<br/>    "sockets": 1,<br/>    "vcores": 1<br/>  }<br/>}</pre> | no |
-| <a name="input_ip_addresses"></a> [ip\_addresses](#input\_ip\_addresses) | List of IP addresses with cidr notation | `list(string)` | `[]` | no |
-| <a name="input_ipconfig0"></a> [ipconfig0](#input\_ipconfig0) | The first IP address to assign to the guest. Format: [gw=<GatewayIPv4>] [,gw6=<GatewayIPv6>] [,ip=<IPv4Format/CIDR>] [,ip6=<IPv6Format/CIDR>] | `string` | `"ip=dhcp"` | no |
-| <a name="input_ipconfig1"></a> [ipconfig1](#input\_ipconfig1) | The second IP address to assign to the guest. Same format as ipconfig0 | `string` | `null` | no |
-| <a name="input_ipconfig2"></a> [ipconfig2](#input\_ipconfig2) | The third IP address to assign to the guest. Same format as ipconfig0 | `string` | `null` | no |
-| <a name="input_memory"></a> [memory](#input\_memory) | The amount of memory to allocate to the VM in Megabytes | `number` | `null` | no |
-| <a name="input_model"></a> [model](#input\_model) | Network Model | `string` | `"virtio"` | no |
-| <a name="input_name"></a> [name](#input\_name) | The name of the VM within Proxmox | `string` | n/a | yes |
-| <a name="input_nameserver"></a> [nameserver](#input\_nameserver) | Sets default DNS server for guest | `string` | `null` | no |
-| <a name="input_networks"></a> [networks](#input\_networks) | List of network configurations for the VM. Leave empty to use single network config (bridge, model, tag variables). | <pre>list(object({<br/>    id        = optional(number, 0)<br/>    model     = optional(string, "virtio")<br/>    bridge    = optional(string, "vmbr0")<br/>    tag       = optional(number)<br/>    firewall  = optional(bool)<br/>    link_down = optional(bool)<br/>    macaddr   = optional(string)<br/>    queues    = optional(number)<br/>    rate      = optional(number)<br/>  }))</pre> | `[]` | no |
-| <a name="input_notes"></a> [notes](#input\_notes) | VM notes field that maps to desc | `string` | `"Managed by Terraform."` | no |
-| <a name="input_ostype"></a> [ostype](#input\_ostype) | The OS Type | `string` | `"cloud-init"` | no |
-| <a name="input_pool"></a> [pool](#input\_pool) | The destination resource pool for the new VM | `string` | `null` | no |
-| <a name="input_proxmox_api_token_id"></a> [proxmox\_api\_token\_id](#input\_proxmox\_api\_token\_id) | API Token | `string` | n/a | yes |
-| <a name="input_proxmox_api_token_secret"></a> [proxmox\_api\_token\_secret](#input\_proxmox\_api\_token\_secret) | API Secret | `string` | n/a | yes |
-| <a name="input_proxmox_api_url"></a> [proxmox\_api\_url](#input\_proxmox\_api\_url) | Full Proxmox API URL | `string` | n/a | yes |
-| <a name="input_proxmox_tls_insecure"></a> [proxmox\_tls\_insecure](#input\_proxmox\_tls\_insecure) | Allow Insecure TLS | `bool` | `true` | no |
-| <a name="input_scsihw"></a> [scsihw](#input\_scsihw) | scsi hardware type | `string` | `"virtio-scsi-pci"` | no |
-| <a name="input_searchdomain"></a> [searchdomain](#input\_searchdomain) | Sets default DNS search domain suffix | `string` | `null` | no |
-| <a name="input_serial0"></a> [serial0](#input\_serial0) | serial device in order for console device to work | `number` | `0` | no |
-| <a name="input_size"></a> [size](#input\_size) | Disk Size | `string` | `null` | no |
-| <a name="input_sockets"></a> [sockets](#input\_sockets) | The number of CPU sockets to allocate to the VM | `number` | `null` | no |
-| <a name="input_sshkeys"></a> [sshkeys](#input\_sshkeys) | Newline delimited list of SSH public keys to add to authorized keys file for the cloud-init user | `string` | n/a | yes |
-| <a name="input_storage"></a> [storage](#input\_storage) | Disk Storage Location | `string` | n/a | yes |
-| <a name="input_tag"></a> [tag](#input\_tag) | Vlan ID | `number` | `null` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | tags comma seperated | `string` | `""` | no |
-| <a name="input_target_node"></a> [target\_node](#input\_target\_node) | The name of the Proxmox Node on which to place the VM | `string` | `null` | no |
-| <a name="input_target_nodes"></a> [target\_nodes](#input\_target\_nodes) | The name of the Proxmox Node on which to place the VM | `list(string)` | `null` | no |
-| <a name="input_vcpus"></a> [vcpus](#input\_vcpus) | The number of vCPU  to allocate to the VM | `number` | `null` | no |
-| <a name="input_vmid"></a> [vmid](#input\_vmid) | The vm id of the VM within Proxmox. Default is next available | `number` | `0` | no |
+| <a name="input_additional_disks"></a> [additional\_disks](#input\_additional\_disks) | Additional disks to attach (beyond scsi0 boot and cloud-init) | <pre>list(object({<br/>    type    = string # scsi, sata, virtio, ide<br/>    storage = string # e.g., "local-lvm", "nvme2-ceph"<br/>    size    = string # e.g., "10G", "100G"<br/>    slot    = number # scsi2–scsi5 (slots 0–1 reserved)<br/>  }))</pre> | `[]` | no |
+| <a name="input_agent"></a> [agent](#input\_agent) | Enable QEMU Guest Agent (1 enabled, 0 disabled) | `number` | `1` | no |
+| <a name="input_bridge"></a> [bridge](#input\_bridge) | Network bridge to attach NICs to (e.g., vmbr0) | `string` | `"vmbr0"` | no |
+| <a name="input_cipassword"></a> [cipassword](#input\_cipassword) | Cloud-init user password | `string` | n/a | yes |
+| <a name="input_ciuser"></a> [ciuser](#input\_ciuser) | Cloud-init default user | `string` | n/a | yes |
+| <a name="input_clone"></a> [clone](#input\_clone) | Source template or VM name to clone | `string` | n/a | yes |
+| <a name="input_cores"></a> [cores](#input\_cores) | CPU cores per socket | `number` | `null` | no |
+| <a name="input_cpu"></a> [cpu](#input\_cpu) | Explicit CPU configuration (overrides cores/sockets/vcpus variables) | <pre>object({<br/>    cores   = number<br/>    sockets = number<br/>    vcores  = number<br/>  })</pre> | `null` | no |
+| <a name="input_id"></a> [id](#input\_id) | NIC device ID/index as required by the provider | `number` | `0` | no |
+| <a name="input_instance_size"></a> [instance\_size](#input\_instance\_size) | Preset size key (xsmall, small, medium, large, xlarge). Empty to use custom values | `string` | `""` | no |
+| <a name="input_instance_sizes"></a> [instance\_sizes](#input\_instance\_sizes) | Map of size presets defining memory, cores, sockets, vcores, and disk size | <pre>map(object({<br/>    memory  = number<br/>    cores   = number<br/>    sockets = number<br/>    vcores  = number<br/>    size    = string<br/>  }))</pre> | <pre>{<br/>  "large": {<br/>    "cores": 8,<br/>    "memory": 16384,<br/>    "size": "40G",<br/>    "sockets": 1,<br/>    "vcores": 8<br/>  },<br/>  "medium": {<br/>    "cores": 4,<br/>    "memory": 8192,<br/>    "size": "20G",<br/>    "sockets": 1,<br/>    "vcores": 4<br/>  },<br/>  "small": {<br/>    "cores": 2,<br/>    "memory": 4096,<br/>    "size": "12G",<br/>    "sockets": 1,<br/>    "vcores": 2<br/>  },<br/>  "xlarge": {<br/>    "cores": 10,<br/>    "memory": 32768,<br/>    "size": "60G",<br/>    "sockets": 1,<br/>    "vcores": 10<br/>  },<br/>  "xsmall": {<br/>    "cores": 1,<br/>    "memory": 2048,<br/>    "size": "10G",<br/>    "sockets": 1,<br/>    "vcores": 1<br/>  }<br/>}</pre> | no |
+| <a name="input_ipconfig0"></a> [ipconfig0](#input\_ipconfig0) | Cloud-init IP config for NIC 0 (e.g., ip=192.168.1.10/24,gw=192.168.1.1) | `string` | `"ip=dhcp"` | no |
+| <a name="input_ipconfig1"></a> [ipconfig1](#input\_ipconfig1) | Cloud-init IP config for NIC 1 (same format as ipconfig0) | `string` | `null` | no |
+| <a name="input_memory"></a> [memory](#input\_memory) | Memory allocated to the VM in MiB | `number` | `null` | no |
+| <a name="input_model"></a> [model](#input\_model) | NIC model (e.g., virtio, e1000) | `string` | `"virtio"` | no |
+| <a name="input_name"></a> [name](#input\_name) | VM name as it will appear in Proxmox | `string` | n/a | yes |
+| <a name="input_nameserver"></a> [nameserver](#input\_nameserver) | Default DNS server for the guest | `string` | `null` | no |
+| <a name="input_networks"></a> [networks](#input\_networks) | Optional NIC list. If empty, a single NIC is built from bridge/model/tag | <pre>list(object({<br/>    id        = optional(number, 0)<br/>    model     = optional(string, "virtio")<br/>    bridge    = optional(string, "vmbr0")<br/>    tag       = optional(number)<br/>    firewall  = optional(bool)<br/>    link_down = optional(bool)<br/>    macaddr   = optional(string)<br/>    queues    = optional(number)<br/>    rate      = optional(number)<br/>  }))</pre> | `[]` | no |
+| <a name="input_notes"></a> [notes](#input\_notes) | Proxmox VM description/notes | `string` | `"Managed by Terraform."` | no |
+| <a name="input_ostype"></a> [ostype](#input\_ostype) | OS type. Use 'cloud-init' for cloud-init templates | `string` | `"cloud-init"` | no |
+| <a name="input_pool"></a> [pool](#input\_pool) | Destination Proxmox resource pool | `string` | `null` | no |
+| <a name="input_scsihw"></a> [scsihw](#input\_scsihw) | SCSI controller model | `string` | `"virtio-scsi-pci"` | no |
+| <a name="input_searchdomain"></a> [searchdomain](#input\_searchdomain) | Default DNS search domain suffix | `string` | `null` | no |
+| <a name="input_serial0"></a> [serial0](#input\_serial0) | Serial device index for console access | `number` | `0` | no |
+| <a name="input_size"></a> [size](#input\_size) | Boot disk size (e.g., 20G) | `string` | `null` | no |
+| <a name="input_sockets"></a> [sockets](#input\_sockets) | Number of CPU sockets | `number` | `null` | no |
+| <a name="input_sshkeys"></a> [sshkeys](#input\_sshkeys) | Newline-delimited SSH public keys for the cloud-init user | `string` | n/a | yes |
+| <a name="input_storage"></a> [storage](#input\_storage) | Proxmox storage target for disks (e.g., local-lvm, nvme2-ceph) | `string` | n/a | yes |
+| <a name="input_tag"></a> [tag](#input\_tag) | 802.1Q VLAN ID | `number` | `null` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Comma-separated tags stored on the VM | `string` | `""` | no |
+| <a name="input_target_node"></a> [target\_node](#input\_target\_node) | Preferred Proxmox node to place the VM | `string` | `null` | no |
+| <a name="input_target_nodes"></a> [target\_nodes](#input\_target\_nodes) | List of Proxmox nodes eligible for placement | `list(string)` | `null` | no |
+| <a name="input_vcpus"></a> [vcpus](#input\_vcpus) | Total virtual CPUs (threads) | `number` | `null` | no |
+| <a name="input_vmid"></a> [vmid](#input\_vmid) | Proxmox VM ID. Use 0 to auto-assign the next available ID | `number` | `0` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_vm_id"></a> [vm\_id](#output\_vm\_id) | VM IDS |
-| <a name="output_vm_ip"></a> [vm\_ip](#output\_vm\_ip) | VM IP Addresses |
+| <a name="output_vm_id"></a> [vm\_id](#output\_vm\_id) | VM ID |
+| <a name="output_vm_ip"></a> [vm\_ip](#output\_vm\_ip) | VM IPv4 Address |
 | <a name="output_vm_memory"></a> [vm\_memory](#output\_vm\_memory) | VM Memory |
-| <a name="output_vm_name"></a> [vm\_name](#output\_vm\_name) | VM NAMES |
-| <a name="output_vm_nameserver"></a> [vm\_nameserver](#output\_vm\_nameserver) | VM Nameservers |
+| <a name="output_vm_name"></a> [vm\_name](#output\_vm\_name) | VM Name |
+| <a name="output_vm_nameserver"></a> [vm\_nameserver](#output\_vm\_nameserver) | VM Nameserver |
 | <a name="output_vm_notes"></a> [vm\_notes](#output\_vm\_notes) | VM Notes |
 | <a name="output_vm_tags"></a> [vm\_tags](#output\_vm\_tags) | VM Tags |
 | <a name="output_vm_vcpus"></a> [vm\_vcpus](#output\_vm\_vcpus) | VM VCPUS |
