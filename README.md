@@ -48,6 +48,61 @@ module "example_vm" {
 ```
 
 
+### Multiple VMs with for_each
+
+```hcl
+locals {
+  vms = {
+    web1 = {
+      name         = "web-1"
+      target_node  = "pve-node-1"
+      clone        = "ubuntu-template"
+      storage      = "local-lvm"
+      instance_size = "small"
+      ipconfig0    = "ip=192.168.10.11/24,gw=192.168.10.1"
+    }
+    db1 = {
+      name         = "db-1"
+      target_node  = "pve-node-2"
+      clone        = "ubuntu-template"
+      storage      = "nvme2-ceph"
+      instance_size = "medium"
+      ipconfig0    = "ip=192.168.10.21/24,gw=192.168.10.1"
+    }
+  }
+}
+
+module "vm" {
+  source = "./modules/pvevm"
+  for_each = local.vms
+
+  name          = each.value.name
+  target_node   = each.value.target_node
+  clone         = each.value.clone
+  storage       = each.value.storage
+  instance_size = each.value.instance_size
+
+  # Optional overrides
+  ipconfig0 = try(each.value.ipconfig0, null)
+  ipconfig1 = try(each.value.ipconfig1, null)
+  networks  = try(each.value.networks, [])
+  additional_disks = try(each.value.additional_disks, [])
+}
+```
+
+To consume outputs with for_each, access them per key or build a map:
+
+```hcl
+# Per-VM access
+module.vm["web1"].vm_id
+
+# Build a map of IDs keyed by VM key
+locals {
+  vm_ids = { for k, m in module.vm : k => m.vm_id }
+}
+```
+
+
 
 ## Inputs
 

@@ -1,7 +1,6 @@
 resource "proxmox_vm_qemu" "pvevm" {
-  count        = var.instance_count
-  name         = var.name != "" && var.instance_count > 1 ? "${var.name}${count.index + 1}" : var.name
-  vmid         = (var.instance_count > 1 ? (var.vmid == 0 ? 0 : var.vmid + count.index) : var.vmid)
+  name         = var.name
+  vmid         = var.vmid
   description  = var.notes
   target_node  = var.target_node
   target_nodes = var.target_nodes
@@ -17,7 +16,13 @@ resource "proxmox_vm_qemu" "pvevm" {
   }
 
   agent = var.agent
-  tags  = var.tags
+  # Normalize tags; provider rejects invalid whitespace-only strings
+  tags  = length(trimspace(var.tags)) > 0 ? trimspace(var.tags) : null
+
+  lifecycle {
+    # Proxmox sometimes round-trips empty tags as a single space, causing drift
+    ignore_changes = [tags]
+  }
   serial {
     id = var.serial0
   }
@@ -108,8 +113,8 @@ resource "proxmox_vm_qemu" "pvevm" {
   }
 
   os_type      = var.ostype
-  ipconfig0    = length(var.ip_addresses) > count.index ? format("ip=%s,gw=%s", var.ip_addresses[count.index], var.gateway) : var.ipconfig0
-  ipconfig1    = length(var.ip_addresses) > count.index ? format("ip=%s,gw=%s", var.ip_addresses[count.index], var.gateway) : var.ipconfig1
+  ipconfig0    = var.ipconfig0
+  ipconfig1    = var.ipconfig1
   nameserver   = var.nameserver
   ciuser       = var.ciuser
   cipassword   = var.cipassword

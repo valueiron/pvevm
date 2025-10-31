@@ -1,26 +1,6 @@
 #####################################################
-# PROXMOX API
+# Module Inputs (single-VM; use for_each at call site)
 #####################################################
-variable "proxmox_api_url" {
-  description = "Full Proxmox API URL"
-  type        = string
-}
-
-variable "proxmox_api_token_id" {
-  description = "API Token"
-  type        = string
-}
-
-variable "proxmox_api_token_secret" {
-  description = "API Secret"
-  type        = string
-}
-
-variable "proxmox_tls_insecure" {
-  description = "Allow Insecure TLS"
-  type        = bool
-  default     = true
-}
 
 #####################################################
 # VM QEMU Resource
@@ -137,17 +117,7 @@ variable "tag" {
   default     = null
 }
 
-variable "ip_addresses" {
-  description = "List of IP addresses with cidr notation"
-  type        = list(string)
-  default     = []
-}
-
-variable "gateway" {
-  description = "Gateway IP Address"
-  type        = string
-  default     = ""
-}
+// Removed legacy ip_addresses/gateway; use ipconfig* directly per VM
 
 ######################### STORAGE
 variable "storage" {
@@ -190,15 +160,7 @@ variable "additional_disks" {
   default = []
 }
 
-variable "connection" {
-  description = "Provisioner connection settings"
-  type        = map(string)
-  sensitive   = true
-  default = {
-    type  = "ssh"
-    agent = true
-  }
-}
+// Removed unused connection settings
 
 variable "pool" {
   description = "The destination resource pool for the new VM"
@@ -206,18 +168,7 @@ variable "pool" {
   default     = null
 }
 
-# Deprecated - use additional_disks instead
-variable "disks" {
-  description = "DEPRECATED: Use additional_disks instead. VM disk config"
-  type        = list(map(string))
-  default     = [{}]
-}
-
-variable "instance_count" {
-  description = "Instance Count"
-  type        = number
-  default     = 1
-}
+// Removed deprecated disks and legacy instance_count (module now single instance)
 
 #####################################################
 # Cloud-Init
@@ -268,11 +219,7 @@ variable "ipconfig1" {
   default     = null
 }
 
-variable "ipconfig2" {
-  description = "The third IP address to assign to the guest. Same format as ipconfig0"
-  type        = string
-  default     = null
-}
+// ipconfig2 removed (module supports ipconfig0/ipconfig1). Add back if needed later
 
 
 # Custom Sizes
