@@ -21,7 +21,7 @@ resource "proxmox_vm_qemu" "pvevm" {
 
   lifecycle {
     # Proxmox sometimes round-trips empty tags as a single space, causing drift
-    ignore_changes = [tags]
+    ignore_changes = [tags,vmid]
   }
   serial {
     id = var.serial0
