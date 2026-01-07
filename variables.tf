@@ -40,8 +40,9 @@ variable "target_nodes" {
 }
 
 variable "clone" {
-  description = "Source template or VM name to clone"
+  description = "Source template or VM name to clone. Not required when ISO is specified."
   type        = string
+  default     = null
 }
 
 variable "memory" {
@@ -131,6 +132,23 @@ variable "size" {
   default     = null
 }
 
+variable "boot" {
+  description = "Boot order specification (e.g., 'order=scsi0;net0' or 'order=ide2;scsi0'). If not specified and ISO is provided, defaults to booting from CD-ROM first."
+  type        = string
+  default     = null
+}
+
+variable "iso" {
+  description = "ISO file location in Proxmox storage format (e.g., 'local:iso/ubuntu-22.04.iso'). When specified, automatically configures IDE2 as a CD-ROM device."
+  type        = string
+  default     = null
+}
+
+variable "pxe" {
+  description = "Enable PXE boot via network interface. When true, sets boot order to network if boot order is not explicitly specified."
+  type        = bool
+  default     = null
+}
 
 ################################# Multiple Network and Disk Support
 variable "networks" {
@@ -180,14 +198,16 @@ variable "ostype" {
 }
 
 variable "ciuser" {
-  description = "Cloud-init default user"
+  description = "Cloud-init default user. Not required when ISO is specified."
   type        = string
+  default     = null
 }
 
 variable "cipassword" {
-  description = "Cloud-init user password"
+  description = "Cloud-init user password. Not required when ISO is specified."
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "searchdomain" {
@@ -203,8 +223,9 @@ variable "nameserver" {
 }
 
 variable "sshkeys" {
-  description = "Newline-delimited SSH public keys for the cloud-init user"
+  description = "Newline-delimited SSH public keys for the cloud-init user. Not required when ISO is specified."
   type        = string
+  default     = null
 }
 
 variable "ipconfig0" {
