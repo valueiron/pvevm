@@ -131,6 +131,23 @@ variable "size" {
   default     = null
 }
 
+variable "boot" {
+  description = "Boot order specification (e.g., 'order=scsi0;net0' or 'order=ide2;scsi0'). If not specified and ISO is provided, defaults to booting from CD-ROM first."
+  type        = string
+  default     = null
+}
+
+variable "iso" {
+  description = "ISO file location in Proxmox storage format (e.g., 'local:iso/ubuntu-22.04.iso'). When specified, automatically configures IDE2 as a CD-ROM device."
+  type        = string
+  default     = null
+}
+
+variable "pxe" {
+  description = "Enable PXE boot via network interface. When true, sets boot order to network if boot order is not explicitly specified."
+  type        = bool
+  default     = null
+}
 
 ################################# Multiple Network and Disk Support
 variable "networks" {

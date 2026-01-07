@@ -110,7 +110,30 @@ resource "proxmox_vm_qemu" "pvevm" {
         }
       }
     }
+
+    # Dynamic IDE block for CD-ROM when ISO is specified
+    dynamic "ide" {
+      for_each = var.iso != null ? [1] : []
+      content {
+        ide2 {
+          cdrom {
+            iso_file = var.iso
+          }
+        }
+      }
+    }
   }
+
+  # Boot order configuration
+  # Priority: explicit boot > ISO default > PXE default > none (use Proxmox defaults)
+  boot = var.boot != null ? var.boot : (
+    var.iso != null ? "order=ide2;scsi0" : (
+      var.pxe == true ? "order=net0" : null
+    )
+  )
+
+  # PXE configuration
+  pxe = var.pxe == true ? true : null
 
   os_type      = var.ostype
   ipconfig0    = var.ipconfig0
