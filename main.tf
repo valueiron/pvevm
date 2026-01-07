@@ -15,9 +15,10 @@ resource "proxmox_vm_qemu" "pvevm" {
     vcores  = var.cpu != null ? var.cpu.vcores : coalesce(var.vcpus, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).vcores)
   }
 
-  agent = var.agent
+  agent     = var.agent
+  skip_ipv6 = true
   # Normalize tags; provider rejects invalid whitespace-only strings
-  tags  = length(trimspace(var.tags)) > 0 ? trimspace(var.tags) : null
+  tags      = length(trimspace(var.tags)) > 0 ? trimspace(var.tags) : null
 
   lifecycle {
     # Proxmox sometimes round-trips empty tags as a single space, causing drift
@@ -63,9 +64,13 @@ resource "proxmox_vm_qemu" "pvevm" {
           size    = coalesce(var.size, lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).size)
         }
       }
-      scsi1 {
-        cloudinit {
-          storage = var.storage
+      # Cloud-init disk only when not using ISO (i.e., when cloning from template)
+      dynamic "scsi1" {
+        for_each = var.iso == null ? [1] : []
+        content {
+          cloudinit {
+            storage = var.storage
+          }
         }
       }
 
@@ -117,7 +122,7 @@ resource "proxmox_vm_qemu" "pvevm" {
       content {
         ide2 {
           cdrom {
-            iso_file = var.iso
+            iso = var.iso
           }
         }
       }

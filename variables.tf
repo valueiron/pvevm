@@ -40,8 +40,9 @@ variable "target_nodes" {
 }
 
 variable "clone" {
-  description = "Source template or VM name to clone"
+  description = "Source template or VM name to clone. Not required when ISO is specified."
   type        = string
+  default     = null
 }
 
 variable "memory" {
@@ -197,14 +198,16 @@ variable "ostype" {
 }
 
 variable "ciuser" {
-  description = "Cloud-init default user"
+  description = "Cloud-init default user. Not required when ISO is specified."
   type        = string
+  default     = null
 }
 
 variable "cipassword" {
-  description = "Cloud-init user password"
+  description = "Cloud-init user password. Not required when ISO is specified."
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "searchdomain" {
@@ -220,8 +223,9 @@ variable "nameserver" {
 }
 
 variable "sshkeys" {
-  description = "Newline-delimited SSH public keys for the cloud-init user"
+  description = "Newline-delimited SSH public keys for the cloud-init user. Not required when ISO is specified."
   type        = string
+  default     = null
 }
 
 variable "ipconfig0" {
