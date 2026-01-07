@@ -226,10 +226,11 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_disks"></a> [additional\_disks](#input\_additional\_disks) | Additional disks to attach (beyond scsi0 boot and cloud-init) | <pre>list(object({<br/>    type    = string # scsi, sata, virtio, ide<br/>    storage = string # e.g., "local-lvm", "nvme2-ceph"<br/>    size    = string # e.g., "10G", "100G"<br/>    slot    = number # scsi2–scsi5 (slots 0–1 reserved)<br/>  }))</pre> | `[]` | no |
 | <a name="input_agent"></a> [agent](#input\_agent) | Enable QEMU Guest Agent (1 enabled, 0 disabled) | `number` | `1` | no |
+| <a name="input_boot"></a> [boot](#input\_boot) | Boot order specification (e.g., 'order=scsi0;net0' or 'order=ide2;scsi0'). If not specified and ISO is provided, defaults to booting from CD-ROM first. | `string` | `null` | no |
 | <a name="input_bridge"></a> [bridge](#input\_bridge) | Network bridge to attach NICs to (e.g., vmbr0) | `string` | `"vmbr0"` | no |
-| <a name="input_cipassword"></a> [cipassword](#input\_cipassword) | Cloud-init user password | `string` | n/a | yes |
-| <a name="input_ciuser"></a> [ciuser](#input\_ciuser) | Cloud-init default user | `string` | n/a | yes |
-| <a name="input_clone"></a> [clone](#input\_clone) | Source template or VM name to clone | `string` | n/a | yes |
+| <a name="input_cipassword"></a> [cipassword](#input\_cipassword) | Cloud-init user password. Not required when ISO is specified. | `string` | `null` | no |
+| <a name="input_ciuser"></a> [ciuser](#input\_ciuser) | Cloud-init default user. Not required when ISO is specified. | `string` | `null` | no |
+| <a name="input_clone"></a> [clone](#input\_clone) | Source template or VM name to clone. Not required when ISO is specified. | `string` | `null` | no |
 | <a name="input_cores"></a> [cores](#input\_cores) | CPU cores per socket | `number` | `null` | no |
 | <a name="input_cpu"></a> [cpu](#input\_cpu) | Explicit CPU configuration (overrides cores/sockets/vcpus variables) | <pre>object({<br/>    cores   = number<br/>    sockets = number<br/>    vcores  = number<br/>  })</pre> | `null` | no |
 | <a name="input_id"></a> [id](#input\_id) | NIC device ID/index as required by the provider | `number` | `0` | no |
@@ -237,6 +238,7 @@ No modules.
 | <a name="input_instance_sizes"></a> [instance\_sizes](#input\_instance\_sizes) | Map of size presets defining memory, cores, sockets, vcores, and disk size | <pre>map(object({<br/>    memory  = number<br/>    cores   = number<br/>    sockets = number<br/>    vcores  = number<br/>    size    = string<br/>  }))</pre> | <pre>{<br/>  "large": {<br/>    "cores": 8,<br/>    "memory": 16384,<br/>    "size": "40G",<br/>    "sockets": 1,<br/>    "vcores": 8<br/>  },<br/>  "medium": {<br/>    "cores": 4,<br/>    "memory": 8192,<br/>    "size": "20G",<br/>    "sockets": 1,<br/>    "vcores": 4<br/>  },<br/>  "small": {<br/>    "cores": 2,<br/>    "memory": 4096,<br/>    "size": "12G",<br/>    "sockets": 1,<br/>    "vcores": 2<br/>  },<br/>  "xlarge": {<br/>    "cores": 10,<br/>    "memory": 32768,<br/>    "size": "60G",<br/>    "sockets": 1,<br/>    "vcores": 10<br/>  },<br/>  "xsmall": {<br/>    "cores": 1,<br/>    "memory": 2048,<br/>    "size": "10G",<br/>    "sockets": 1,<br/>    "vcores": 1<br/>  }<br/>}</pre> | no |
 | <a name="input_ipconfig0"></a> [ipconfig0](#input\_ipconfig0) | Cloud-init IP config for NIC 0 (e.g., ip=192.168.1.10/24,gw=192.168.1.1) | `string` | `"ip=dhcp"` | no |
 | <a name="input_ipconfig1"></a> [ipconfig1](#input\_ipconfig1) | Cloud-init IP config for NIC 1 (same format as ipconfig0) | `string` | `null` | no |
+| <a name="input_iso"></a> [iso](#input\_iso) | ISO file location in Proxmox storage format (e.g., 'local:iso/ubuntu-22.04.iso'). When specified, automatically configures IDE2 as a CD-ROM device. | `string` | `null` | no |
 | <a name="input_memory"></a> [memory](#input\_memory) | Memory allocated to the VM in MiB | `number` | `null` | no |
 | <a name="input_model"></a> [model](#input\_model) | NIC model (e.g., virtio, e1000) | `string` | `"virtio"` | no |
 | <a name="input_name"></a> [name](#input\_name) | VM name as it will appear in Proxmox | `string` | n/a | yes |
@@ -245,12 +247,13 @@ No modules.
 | <a name="input_notes"></a> [notes](#input\_notes) | Proxmox VM description/notes | `string` | `"Managed by Terraform."` | no |
 | <a name="input_ostype"></a> [ostype](#input\_ostype) | OS type. Use 'cloud-init' for cloud-init templates | `string` | `"cloud-init"` | no |
 | <a name="input_pool"></a> [pool](#input\_pool) | Destination Proxmox resource pool | `string` | `null` | no |
+| <a name="input_pxe"></a> [pxe](#input\_pxe) | Enable PXE boot via network interface. When true, sets boot order to network if boot order is not explicitly specified. | `bool` | `null` | no |
 | <a name="input_scsihw"></a> [scsihw](#input\_scsihw) | SCSI controller model | `string` | `"virtio-scsi-pci"` | no |
 | <a name="input_searchdomain"></a> [searchdomain](#input\_searchdomain) | Default DNS search domain suffix | `string` | `null` | no |
 | <a name="input_serial0"></a> [serial0](#input\_serial0) | Serial device index for console access | `number` | `0` | no |
 | <a name="input_size"></a> [size](#input\_size) | Boot disk size (e.g., 20G) | `string` | `null` | no |
 | <a name="input_sockets"></a> [sockets](#input\_sockets) | Number of CPU sockets | `number` | `null` | no |
-| <a name="input_sshkeys"></a> [sshkeys](#input\_sshkeys) | Newline-delimited SSH public keys for the cloud-init user | `string` | n/a | yes |
+| <a name="input_sshkeys"></a> [sshkeys](#input\_sshkeys) | Newline-delimited SSH public keys for the cloud-init user. Not required when ISO is specified. | `string` | `null` | no |
 | <a name="input_storage"></a> [storage](#input\_storage) | Proxmox storage target for disks (e.g., local-lvm, nvme2-ceph) | `string` | n/a | yes |
 | <a name="input_tag"></a> [tag](#input\_tag) | 802.1Q VLAN ID | `number` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Comma-separated tags stored on the VM | `string` | `""` | no |
