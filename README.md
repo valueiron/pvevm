@@ -266,7 +266,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_vm_id"></a> [vm\_id](#output\_vm\_id) | VM ID |
+| <a name="output_vm_id"></a> [vm\_id](#output\_vm\_id) | VM ID (parsed from resource ID to handle auto-assigned VMIDs) |
 | <a name="output_vm_ip"></a> [vm\_ip](#output\_vm\_ip) | VM IPv4 Address |
 | <a name="output_vm_memory"></a> [vm\_memory](#output\_vm\_memory) | VM Memory |
 | <a name="output_vm_name"></a> [vm\_name](#output\_vm\_name) | VM Name |
