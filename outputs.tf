@@ -14,8 +14,8 @@ output "vm_name" {
 }
 
 output "vm_id" {
-  description = "VM ID"
-  value       = proxmox_vm_qemu.pvevm.vmid
+  description = "VM ID (parsed from resource ID to handle auto-assigned VMIDs)"
+  value       = tonumber(element(split("/", proxmox_vm_qemu.pvevm.id), 2))
 }
 
 output "vm_vcpus" {
