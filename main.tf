@@ -48,7 +48,7 @@ resource "proxmox_vm_qemu" "pvevm" {
     }]
 
     content {
-      id        = network.value.id
+      id        = network.key
       bridge    = network.value.bridge
       model     = network.value.model
       tag       = network.value.tag
