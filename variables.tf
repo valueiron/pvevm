@@ -244,18 +244,16 @@ variable "sshkeys" {
 }
 
 variable "ipconfig0" {
-  description = "Cloud-init IP config for NIC 0 (e.g., ip=192.168.1.10/24,gw=192.168.1.1)"
+  description = "Cloud-init IP config for NIC 0 (e.g., ip=192.168.1.10/24,gw=192.168.1.1). Only ipconfig0 and ipconfig1 are exposed; VMs with more than 2 NICs cannot configure cloud-init IP for NIC 2+."
   type        = string
   default     = "ip=dhcp"
 }
 
 variable "ipconfig1" {
-  description = "Cloud-init IP config for NIC 1 (same format as ipconfig0)"
+  description = "Cloud-init IP config for NIC 1 (same format as ipconfig0). Maximum supported NIC index for cloud-init is 1."
   type        = string
   default     = null
 }
-
-// ipconfig2 removed (module supports ipconfig0/ipconfig1). Add back if needed later
 
 
 # Custom Sizes
