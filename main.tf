@@ -16,7 +16,7 @@ resource "proxmox_vm_qemu" "pvevm" {
   }
 
   agent     = var.agent
-  skip_ipv6 = true
+  skip_ipv6 = var.skip_ipv6
   # Normalize tags; provider rejects invalid whitespace-only strings
   tags      = length(trimspace(var.tags)) > 0 ? trimspace(var.tags) : null
 

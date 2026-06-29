@@ -75,6 +75,12 @@ variable "vcpus" {
   default     = null
 }
 
+variable "skip_ipv6" {
+  description = "Disable IPv6 address reporting from QEMU agent"
+  type        = bool
+  default     = true
+}
+
 variable "agent" {
   description = "Enable QEMU Guest Agent (1 enabled, 0 disabled)"
   type        = number
