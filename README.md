@@ -42,7 +42,7 @@ module "example_vm" {
   
   # Cloud-init configuration
   ciuser     = "ubuntu"
-  cipassword = "your-password"
+  cipassword = var.cipassword
   sshkeys    = file("~/.ssh/id_rsa.pub")
 }
 ```
