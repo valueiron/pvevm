@@ -135,6 +135,11 @@ variable "tag" {
 variable "storage" {
   description = "Proxmox storage target for disks (e.g., local-lvm, nvme2-ceph)"
   type        = string
+
+  validation {
+    condition     = length(var.storage) > 0
+    error_message = "storage must not be empty."
+  }
 }
 
 variable "size" {
