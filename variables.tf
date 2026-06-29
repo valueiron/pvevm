@@ -190,12 +190,12 @@ variable "networks" {
 }
 
 variable "additional_disks" {
-  description = "Additional disks to attach (beyond scsi0 boot and cloud-init)"
+  description = "Additional disks to attach beyond the scsi0 boot disk and cloud-init disk. Only 'scsi' type is supported. Slots 0 and 1 are reserved; use slots 2–5."
   type = list(object({
-    type    = string # only 'scsi' is currently supported
-    storage = string # e.g., "local-lvm", "nvme2-ceph"
-    size    = string # e.g., "10G", "100G"
-    slot    = number # scsi2–scsi5 (slots 0–1 reserved)
+    type    = string
+    storage = string
+    size    = string
+    slot    = number
   }))
   default = []
 
