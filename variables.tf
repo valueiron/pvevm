@@ -79,6 +79,11 @@ variable "agent" {
   description = "Enable QEMU Guest Agent (1 enabled, 0 disabled)"
   type        = number
   default     = 1
+
+  validation {
+    condition     = contains([0, 1], var.agent)
+    error_message = "agent must be 0 (disabled) or 1 (enabled)."
+  }
 }
 
 variable "serial0" {
