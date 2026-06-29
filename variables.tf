@@ -98,6 +98,12 @@ variable "serial0" {
   default     = 0
 }
 
+variable "serial0_type" {
+  description = "Serial device type (e.g., 'socket' for a Unix socket, or a host device path like '/dev/ttyS0')"
+  type        = string
+  default     = "socket"
+}
+
 variable "tags" {
   description = "Comma-separated tags stored on the VM"
   type        = string

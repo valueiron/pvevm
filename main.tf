@@ -30,7 +30,8 @@ resource "proxmox_vm_qemu" "pvevm" {
     }
   }
   serial {
-    id = var.serial0
+    id   = var.serial0
+    type = var.serial0_type
   }
 
   # Dynamic network blocks - use multiple networks if provided, otherwise fall back to single network
