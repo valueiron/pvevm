@@ -258,6 +258,11 @@ variable "instance_size" {
   description = "Preset size key (xsmall, small, medium, large, xlarge). Empty to use custom values"
   type        = string
   default     = ""
+
+  validation {
+    condition     = var.instance_size == "" || contains(["xsmall", "small", "medium", "large", "xlarge"], var.instance_size)
+    error_message = "instance_size must be empty or one of: xsmall, small, medium, large, xlarge."
+  }
 }
 
 variable "cpu" {
