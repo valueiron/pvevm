@@ -218,7 +218,7 @@ variable "pool" {
 # Cloud-Init
 #####################################################
 variable "ostype" {
-  description = "OS type. Use 'cloud-init' for cloud-init templates"
+  description = "OS type passed to the provider's os_type attribute. Use 'cloud-init' for cloud-init templates (the default). Other accepted values: ubuntu, centos, fedora, opensuse, arch, debian, alpine, solaris, l24, l26, other, wxp, w2k, w2k3, w2k8, wvista, win7, win8, win10, win11."
   type        = string
   default     = "cloud-init"
 }
