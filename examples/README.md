@@ -2,13 +2,6 @@
 
 This module has been updated to use Proxmox provider v3.0.2-rc03 with improved syntax.
 
-## New in feature/expansion Branch
-
-The `feature/expansion` branch adds support for:
-- **Multiple Network Interfaces**: Configure VMs with multiple NICs on different VLANs/bridges
-- **Additional Disks**: Add extra disks beyond the primary and cloudinit disks
-- See [multiple-networks-disks.md](./multiple-networks-disks.md) for detailed examples
-
 ## Basic Usage
 
 ```hcl
@@ -69,29 +62,30 @@ module "custom_vm" {
 }
 ```
 
-## Multiple Instances
+## Multiple Instances with for_each
 
 ```hcl
+locals {
+  cluster_nodes = { for i in range(3) : "node-${i}" => { vmid = 300 + i } }
+}
+
 module "cluster_vms" {
-  source = "../../modules/pvevm"
-  
-  name           = "cluster-node"
-  instance_count = 3
-  target_node    = "pve-node-1"
-  clone          = "ubuntu-template"
-  storage        = "local-lvm"
-  
-  # All instances will use the same configuration
+  source   = "../../modules/pvevm"
+  for_each = local.cluster_nodes
+
+  name        = "cluster-${each.key}"
+  vmid        = each.value.vmid
+  target_node = "pve-node-1"
+  clone       = "ubuntu-template"
+  storage     = "local-lvm"
+
   instance_size = "large"
-  
-  # Network configuration
+
   bridge = "vmbr0"
   model  = "virtio"
-  
-  # Cloud-init configuration
-  ciuser     = "ubuntu"
-  cipassword = "your-password"
-  sshkeys    = file("~/.ssh/id_rsa.pub")
+
+  ciuser  = "ubuntu"
+  sshkeys = file("~/.ssh/id_rsa.pub")
 }
 ```
 
