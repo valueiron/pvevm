@@ -104,19 +104,6 @@ locals {
 
 
 
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| name | The name of the VM within Proxmox | `string` | n/a | yes |
-| target_node | The name of the Proxmox Node on which to place the VM | `string` | `null` | no |
-| clone | The base VM from which to clone to create the new VM | `string` | n/a | yes |
-| storage | Disk Storage Location | `string` | n/a | yes |
-| instance_size | The size of the instance (xsmall, small, medium, large, xlarge) | `string` | `""` | no |
-| cpu | CPU configuration block | `object` | `null` | no |
-| memory | The amount of memory to allocate to the VM in Megabytes | `number` | `null` | no |
-| size | Disk Size | `string` | `null` | no |
-
 ## Outputs
 
 | Name | Description |
