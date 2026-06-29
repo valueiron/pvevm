@@ -58,19 +58,19 @@ variable "scsihw" {
 }
 
 variable "cores" {
-  description = "CPU cores per socket"
+  description = "DEPRECATED: use the cpu block or instance_size instead. CPU cores per socket."
   type        = number
   default     = null
 }
 
 variable "sockets" {
-  description = "Number of CPU sockets"
+  description = "DEPRECATED: use the cpu block or instance_size instead. Number of CPU sockets."
   type        = number
   default     = null
 }
 
 variable "vcpus" {
-  description = "Total virtual CPUs (threads)"
+  description = "DEPRECATED: use the cpu block or instance_size instead. Total virtual CPUs (threads)."
   type        = number
   default     = null
 }
