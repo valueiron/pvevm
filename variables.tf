@@ -22,7 +22,7 @@ variable "vmid" {
 }
 
 variable "notes" {
-  description = "Proxmox VM description/notes"
+  description = "Proxmox VM notes (maps to the provider's 'description' resource attribute and the Notes field in the Proxmox UI)"
   type        = string
   default     = "Managed by Terraform."
 }
