@@ -170,12 +170,22 @@ variable "networks" {
 variable "additional_disks" {
   description = "Additional disks to attach (beyond scsi0 boot and cloud-init)"
   type = list(object({
-    type    = string # scsi, sata, virtio, ide
+    type    = string # only 'scsi' is currently supported
     storage = string # e.g., "local-lvm", "nvme2-ceph"
     size    = string # e.g., "10G", "100G"
     slot    = number # scsi2–scsi5 (slots 0–1 reserved)
   }))
   default = []
+
+  validation {
+    condition     = alltrue([for d in var.additional_disks : contains(["scsi"], d.type)])
+    error_message = "Only 'scsi' disk type is currently supported."
+  }
+
+  validation {
+    condition     = alltrue([for d in var.additional_disks : d.slot >= 2 && d.slot <= 5])
+    error_message = "additional_disks slot must be between 2 and 5 (slots 0-1 are reserved)."
+  }
 }
 
 // Removed unused connection settings
