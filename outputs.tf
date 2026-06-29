@@ -19,8 +19,18 @@ output "vm_id" {
 }
 
 output "vm_vcpus" {
-  description = "VM VCPUS"
-  value       = var.cpu != null ? var.cpu.vcores : lookup(var.instance_sizes, var.instance_size, var.instance_sizes["small"]).vcores
+  description = "VM vCPUs (vcores) as applied by the provider"
+  value       = proxmox_vm_qemu.pvevm.cpu[0].vcores
+}
+
+output "vm_cores" {
+  description = "VM CPU cores per socket as applied by the provider"
+  value       = proxmox_vm_qemu.pvevm.cpu[0].cores
+}
+
+output "vm_sockets" {
+  description = "VM CPU sockets as applied by the provider"
+  value       = proxmox_vm_qemu.pvevm.cpu[0].sockets
 }
 
 output "vm_memory" {
