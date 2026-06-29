@@ -22,7 +22,12 @@ resource "proxmox_vm_qemu" "pvevm" {
 
   lifecycle {
     # Proxmox sometimes round-trips empty tags as a single space, causing drift
-    ignore_changes = [tags,vmid]
+    ignore_changes = [tags, vmid]
+
+    precondition {
+      condition     = var.target_node != null || var.target_nodes != null
+      error_message = "Either target_node or target_nodes must be set."
+    }
   }
   serial {
     id = var.serial0
