@@ -16,16 +16,22 @@ resource "proxmox_vm_qemu" "pvevm" {
   }
 
   agent     = var.agent
-  skip_ipv6 = true
+  skip_ipv6 = var.skip_ipv6
   # Normalize tags; provider rejects invalid whitespace-only strings
   tags      = length(trimspace(var.tags)) > 0 ? trimspace(var.tags) : null
 
   lifecycle {
     # Proxmox sometimes round-trips empty tags as a single space, causing drift
-    ignore_changes = [tags,vmid]
+    ignore_changes = [tags]
+
+    precondition {
+      condition     = var.target_node != null || var.target_nodes != null
+      error_message = "Either target_node or target_nodes must be set."
+    }
   }
   serial {
-    id = var.serial0
+    id   = var.serial0
+    type = var.serial0_type
   }
 
   # Dynamic network blocks - use multiple networks if provided, otherwise fall back to single network
@@ -43,7 +49,7 @@ resource "proxmox_vm_qemu" "pvevm" {
     }]
 
     content {
-      id        = network.value.id
+      id        = network.key
       bridge    = network.value.bridge
       model     = network.value.model
       tag       = network.value.tag

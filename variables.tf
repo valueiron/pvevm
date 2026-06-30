@@ -22,7 +22,7 @@ variable "vmid" {
 }
 
 variable "notes" {
-  description = "Proxmox VM description/notes"
+  description = "Proxmox VM notes (maps to the provider's 'description' resource attribute and the Notes field in the Proxmox UI)"
   type        = string
   default     = "Managed by Terraform."
 }
@@ -58,33 +58,50 @@ variable "scsihw" {
 }
 
 variable "cores" {
-  description = "CPU cores per socket"
+  description = "DEPRECATED: use the cpu block or instance_size instead. CPU cores per socket."
   type        = number
   default     = null
 }
 
 variable "sockets" {
-  description = "Number of CPU sockets"
+  description = "DEPRECATED: use the cpu block or instance_size instead. Number of CPU sockets."
   type        = number
   default     = null
 }
 
 variable "vcpus" {
-  description = "Total virtual CPUs (threads)"
+  description = "DEPRECATED: use the cpu block or instance_size instead. Total virtual CPUs (threads)."
   type        = number
   default     = null
+}
+
+variable "skip_ipv6" {
+  description = "Disable IPv6 address reporting from QEMU agent"
+  type        = bool
+  default     = true
 }
 
 variable "agent" {
   description = "Enable QEMU Guest Agent (1 enabled, 0 disabled)"
   type        = number
   default     = 1
+
+  validation {
+    condition     = contains([0, 1], var.agent)
+    error_message = "agent must be 0 (disabled) or 1 (enabled)."
+  }
 }
 
 variable "serial0" {
   description = "Serial device index for console access"
   type        = number
   default     = 0
+}
+
+variable "serial0_type" {
+  description = "Serial device type (e.g., 'socket' for a Unix socket, or a host device path like '/dev/ttyS0')"
+  type        = string
+  default     = "socket"
 }
 
 variable "tags" {
@@ -124,6 +141,11 @@ variable "tag" {
 variable "storage" {
   description = "Proxmox storage target for disks (e.g., local-lvm, nvme2-ceph)"
   type        = string
+
+  validation {
+    condition     = length(var.storage) > 0
+    error_message = "storage must not be empty."
+  }
 }
 
 variable "size" {
@@ -168,14 +190,24 @@ variable "networks" {
 }
 
 variable "additional_disks" {
-  description = "Additional disks to attach (beyond scsi0 boot and cloud-init)"
+  description = "Additional disks to attach beyond the scsi0 boot disk and cloud-init disk. Only 'scsi' type is supported. Slots 0 and 1 are reserved; use slots 2–5."
   type = list(object({
-    type    = string # scsi, sata, virtio, ide
-    storage = string # e.g., "local-lvm", "nvme2-ceph"
-    size    = string # e.g., "10G", "100G"
-    slot    = number # scsi2–scsi5 (slots 0–1 reserved)
+    type    = string
+    storage = string
+    size    = string
+    slot    = number
   }))
   default = []
+
+  validation {
+    condition     = alltrue([for d in var.additional_disks : contains(["scsi"], d.type)])
+    error_message = "Only 'scsi' disk type is currently supported."
+  }
+
+  validation {
+    condition     = alltrue([for d in var.additional_disks : d.slot >= 2 && d.slot <= 5])
+    error_message = "additional_disks slot must be between 2 and 5 (slots 0-1 are reserved)."
+  }
 }
 
 // Removed unused connection settings
@@ -192,7 +224,7 @@ variable "pool" {
 # Cloud-Init
 #####################################################
 variable "ostype" {
-  description = "OS type. Use 'cloud-init' for cloud-init templates"
+  description = "OS type passed to the provider's os_type attribute. Use 'cloud-init' for cloud-init templates (the default). Other accepted values: ubuntu, centos, fedora, opensuse, arch, debian, alpine, solaris, l24, l26, other, wxp, w2k, w2k3, w2k8, wvista, win7, win8, win10, win11."
   type        = string
   default     = "cloud-init"
 }
@@ -229,18 +261,16 @@ variable "sshkeys" {
 }
 
 variable "ipconfig0" {
-  description = "Cloud-init IP config for NIC 0 (e.g., ip=192.168.1.10/24,gw=192.168.1.1)"
+  description = "Cloud-init IP config for NIC 0 (e.g., ip=192.168.1.10/24,gw=192.168.1.1). Only ipconfig0 and ipconfig1 are exposed; VMs with more than 2 NICs cannot configure cloud-init IP for NIC 2+."
   type        = string
   default     = "ip=dhcp"
 }
 
 variable "ipconfig1" {
-  description = "Cloud-init IP config for NIC 1 (same format as ipconfig0)"
+  description = "Cloud-init IP config for NIC 1 (same format as ipconfig0). Maximum supported NIC index for cloud-init is 1."
   type        = string
   default     = null
 }
-
-// ipconfig2 removed (module supports ipconfig0/ipconfig1). Add back if needed later
 
 
 # Custom Sizes
@@ -248,6 +278,11 @@ variable "instance_size" {
   description = "Preset size key (xsmall, small, medium, large, xlarge). Empty to use custom values"
   type        = string
   default     = ""
+
+  validation {
+    condition     = var.instance_size == "" || contains(["xsmall", "small", "medium", "large", "xlarge"], var.instance_size)
+    error_message = "instance_size must be empty or one of: xsmall, small, medium, large, xlarge."
+  }
 }
 
 variable "cpu" {
